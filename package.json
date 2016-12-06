@@ -29,11 +29,8 @@
     "presets": [
       "es2015"
     ]
-<<<<<<< HEAD
   },
   "dependencies": {
     "underscore": "^1.8.3"
-=======
->>>>>>> initial commit
   }
 }
