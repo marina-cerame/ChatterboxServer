@@ -28,11 +28,14 @@ var requestHandler = function(request, response) {
 
   var headers = defaultCorsHeaders;
 
-  headers['Content-Type'] = 'JSON';
+  headers['Content-Type'] = 'json';
   console.log(request.url);
   if (request.url === '/classes/messages') {
   // ================ POST METHOD ================
-    if (request.method === 'POST') {
+    if (request.method === 'OPTIONS') {
+      response.writeHead(200, headers);
+      response.end();
+    } else if (request.method === 'POST') {
       console.log('POST');
       var body = '';
       request.on('data', function (data) {
@@ -43,9 +46,9 @@ var requestHandler = function(request, response) {
         storage.push(JSON.parse(body));
         console.log('Body: ' + body);
       });
-      response.writeHead(201, {'Content-Type': 'json'});
-      response.end('post received');
-    } else {
+      response.writeHead(201, headers);
+      response.end(JSON.stringify(body));
+    } else if (request.method === 'GET') {
       // ================ GET METHOD ================
       console.log('GET');
       var json = JSON.stringify({
@@ -53,11 +56,11 @@ var requestHandler = function(request, response) {
         url: request.url,
         results: storage
       });
-      response.writeHead(200, {'Content-Type': 'json'});
+      response.writeHead(200, headers);
       response.end(json);
     }
   } else {
-    response.writeHead(404, {'Content-Type': 'json'});
+    response.writeHead(404, headers);
     response.end('wtf');
   }
 };
