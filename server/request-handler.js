@@ -12,6 +12,15 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 
+var defaultCorsHeaders = {
+  'access-control-allow-origin': '*',
+  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'access-control-allow-headers': 'content-type, accept',
+  'access-control-max-age': 10 // Seconds.
+};
+
+var storage = [];
+
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
   //
@@ -21,30 +30,54 @@ var requestHandler = function(request, response) {
   //
   // Documentation for both request and response can be found in the HTTP section at
   // http://nodejs.org/documentation/api/
-
+  // response.request(request.url, request.method);
   // Do some basic logging.
   //
   // Adding more logging to your server can be an easy way to get passive
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
-
   // The outgoing status.
   var statusCode = 200;
 
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
-
   // Tell the client we are sending them plain text.
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = 'text/plain';
-
+  headers['Content-Type'] = 'JSON';
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
   response.writeHead(statusCode, headers);
 
+  if (request.method === 'POST') {
+    console.log('POST');
+    var body = '';
+    request.on('data', function (data) {
+      body += data;
+      console.log('Partial body: ' + body);
+    });
+    request.on('end', function () {
+      storage.push(JSON.parse(body));
+      console.log('Body: ' + body);
+    });
+    response.writeHead(201, {'Content-Type': 'json'});
+    response.end('post received');
+  } else {
+    console.log('GET');
+    // console.log(request.data, 'aionfjklmd<===============')
+    var json = JSON.stringify({
+      method: request.method,
+      url: request.url,
+      results: storage
+    });
+    response.writeHead(200, {'Content-Type': 'json'});
+    response.end(json);
+  }
+
+
+  // response.send(JSON.stringify(request.url));
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
   // response.end() will be the body of the response - i.e. what shows
@@ -52,7 +85,7 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end('Hello, World!');
+  response.end(json);
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
@@ -64,10 +97,6 @@ var requestHandler = function(request, response) {
 //
 // Another way to get around this restriction is to serve you chat
 // client from this domain by setting up static file serving.
-var defaultCorsHeaders = {
-  'access-control-allow-origin': '*',
-  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'access-control-allow-headers': 'content-type, accept',
-  'access-control-max-age': 10 // Seconds.
-};
 
+// exports.defaultCorsHeaders = defaultCorsHeaders;
+exports.requestHandler = requestHandler;
