@@ -12,6 +12,7 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 
+<<<<<<< HEAD
 var defaultCorsHeaders = {
   'access-control-allow-origin': '*',
   'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
@@ -21,6 +22,8 @@ var defaultCorsHeaders = {
 
 var storage = [];
 
+=======
+>>>>>>> initial commit
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
   //
@@ -30,7 +33,6 @@ var requestHandler = function(request, response) {
   //
   // Documentation for both request and response can be found in the HTTP section at
   // http://nodejs.org/documentation/api/
-  // response.request(request.url, request.method);
   // Do some basic logging.
   //
   // Adding more logging to your server can be an easy way to get passive
@@ -76,8 +78,6 @@ var requestHandler = function(request, response) {
     response.end(json);
   }
 
-
-  // response.send(JSON.stringify(request.url));
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
   // response.end() will be the body of the response - i.e. what shows
@@ -97,6 +97,18 @@ var requestHandler = function(request, response) {
 //
 // Another way to get around this restriction is to serve you chat
 // client from this domain by setting up static file serving.
+<<<<<<< HEAD
 
 // exports.defaultCorsHeaders = defaultCorsHeaders;
 exports.requestHandler = requestHandler;
+=======
+var defaultCorsHeaders = {
+  'access-control-allow-origin': '*',
+  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'access-control-allow-headers': 'content-type, accept',
+  'access-control-max-age': 10 // Seconds.
+};
+
+exports.requestHandler = requestHandler;
+exports.defaultCorsHeaders = defaultCorsHeaders;
+>>>>>>> initial commit
